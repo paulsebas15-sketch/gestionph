@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A&V Victoria Pineda — GestiónPH</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--v:#1a3d2b;--vm:#2d6a4f;--vl:#3d8c68;--b:#f5f0e8;--bd:#e8dcc8;--bdd:#c9b99a;--tx:#1a3d2b;--txs:#5a7a6a;--txt:#8aaa98;--w:#fdfaf5;--brd:#d4c8b0;--rj:#c0392b;--am:#b7791f;--az:#1a5276;--shadow:0 2px 12px rgba(26,61,43,.08);--r:10px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--b);color:var(--tx);min-height:100vh;font-size:14px}
+input,select,textarea,button{font-family:'DM Sans',sans-serif}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:var(--bd)}::-webkit-scrollbar-thumb{background:var(--bdd);border-radius:99px}
+.screen{display:none;min-height:100vh}
+#screen-login.active,#screen-picker.active{display:flex !important}
+#screen-app.active{display:flex !important;flex-direction:column}
+/* LOGIN */
+#screen-login{background:linear-gradient(135deg,var(--v) 0%,var(--vm) 60%,#3d8c6830 100%);align-items:center;justify-content:center;padding:2rem}
+.login-wrap{text-align:center;max-width:380px;width:100%}
+.login-logo-img{width:180px;height:auto;margin:0 auto 20px;mix-blend-mode:screen;border-radius:8px}
+.login-title{font-size:13px;color:rgba(245,240,232,.65);margin-bottom:24px;letter-spacing:.5px}
+.login-card{background:rgba(253,250,245,.96);backdrop-filter:blur(20px);border-radius:18px;padding:26px;border:1px solid rgba(245,240,232,.3);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.login-card-title{font-size:14px;font-weight:600;color:var(--v);margin-bottom:6px}
+.login-card-sub{font-size:11px;color:var(--txs);margin-bottom:18px;line-height:1.5}
+/* Email login form */
+.email-form{display:flex;flex-direction:column;gap:8px}
+.email-input{padding:11px 14px;border:1.5px solid var(--brd);border-radius:10px;font-size:13px;color:var(--tx);background:var(--w);transition:.2s;width:100%}
+.email-input:focus{outline:none;border-color:var(--vm);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
+.login-btn{padding:12px;background:var(--v);color:var(--b);border:none;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.login-btn:hover{background:var(--vm);transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,61,43,.3)}
+.login-btn svg{flex-shrink:0}
+.login-error{font-size:11px;color:var(--rj);background:#fce8e6;padding:8px 12px;border-radius:8px;display:none;text-align:left}
+.login-note{font-size:10px;color:var(--txt);margin-top:14px;line-height:1.6}
+.login-divider{display:flex;align-items:center;gap:8px;margin:10px 0;color:var(--txt);font-size:10px}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:.5px;background:var(--brd)}
+
+
+/* LOGIN — CÉDULA */
+.login-bg{min-height:100vh;background:linear-gradient(160deg,#162d20 0%,#1a3d2b 45%,#2d6a4f 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1rem;gap:0}
+.login-logo-pin{width:170px;height:auto;mix-blend-mode:screen;border-radius:8px;margin-bottom:10px}
+.login-tagline{font-size:10px;letter-spacing:2px;color:rgba(245,240,232,.4);text-transform:uppercase;margin-bottom:28px;text-align:center}
+.cedula-card{background:rgba(253,250,245,.97);border-radius:20px;padding:28px 24px;width:100%;max-width:340px;box-shadow:0 24px 64px rgba(0,0,0,.3);text-align:center;margin-bottom:16px}
+.cedula-title{font-size:16px;font-weight:700;color:#1a3d2b;margin-bottom:5px}
+.cedula-sub{font-size:11px;color:#8aaa98;margin-bottom:20px}
+.cedula-input{width:100%;padding:13px 16px;border:2px solid #d4c8b0;border-radius:11px;font-size:18px;font-weight:600;color:#1a3d2b;text-align:center;font-family:'DM Mono',monospace;letter-spacing:2px;transition:.2s;background:#fdfaf5;margin-bottom:12px;-moz-appearance:textfield}
+.cedula-input::-webkit-outer-spin-button,.cedula-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.cedula-input:focus{outline:none;border-color:#2d6a4f;box-shadow:0 0 0 4px rgba(45,106,79,.12)}
+.cedula-btn{width:100%;padding:14px;background:#1a3d2b;color:#f5f0e8;border:none;border-radius:11px;font-size:14px;font-weight:600;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.cedula-btn:hover{background:#2d6a4f;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,61,43,.3)}
+.cedula-btn:active{transform:scale(.98)}
+.cedula-error{margin-top:14px;font-size:12px;font-weight:500;padding:10px 14px;border-radius:9px;line-height:1.5;text-align:center}
+.cedula-error.no-access{color:#c0392b;background:#fce8e6;border:.5px solid #e8a09a}
+.cedula-error.bloqueado{color:#7a2d1a;background:#fce8e6;border:.5px solid #e8a09a}
+.login-footer-note{font-size:10px;color:rgba(245,240,232,.25);text-align:center;line-height:1.6}
+
+/* TOGGLE SWITCH (para habilitar/deshabilitar delegados) */
+.toggle-wrap{display:flex;align-items:center;gap:10px}
+.toggle{position:relative;width:38px;height:22px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:#d4c8b0;border-radius:99px;cursor:pointer;transition:.25s}
+.toggle-slider::before{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#fff;left:3px;top:3px;transition:.25s;box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.toggle input:checked + .toggle-slider{background:#2d6a4f}
+.toggle input:checked + .toggle-slider::before{transform:translateX(16px)}
+.del-access-row{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:9px;border:.5px solid var(--brd);margin-bottom:6px;background:var(--b)}
+.del-access-row.inactivo{opacity:.55}
+
+/* Quitar secciones de picker que ya no se usan */
+/* PICKER */
+#screen-picker{background:linear-gradient(135deg,var(--v) 0%,var(--vm) 100%);align-items:center;justify-content:center;padding:2rem}
+.picker-wrap{width:100%;max-width:400px}
+.picker-logo{display:flex;flex-direction:column;align-items:center;margin-bottom:18px;gap:6px}
+.picker-logo img{width:150px;mix-blend-mode:screen;border-radius:6px}
+.picker-card{background:var(--w);border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.picker-title{font-size:13px;font-weight:600;color:var(--v);margin-bottom:14px;text-align:center}
+.acct{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:.15s;border:.5px solid transparent;margin-bottom:6px}
+.acct:hover{background:var(--b);border-color:var(--brd);transform:translateX(3px)}
+.acct-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--b);flex-shrink:0}
+.acct-name{font-size:12px;font-weight:500;color:var(--tx)}
+.acct-email{font-size:10px;color:var(--txs)}
+.acct-rol{font-size:9px;padding:2px 8px;border-radius:99px;margin-left:auto;white-space:nowrap;font-weight:500}
+.rol-staff{background:#e0ede6;color:var(--v)}.rol-del{background:#f0eade;color:#7a5c2e}
+.picker-footer{border-top:1px solid var(--brd);margin-top:8px;padding-top:10px;text-align:center;font-size:10px;color:var(--txt)}
+.back-btn{font-size:11px;color:rgba(245,240,232,.7);background:none;border:none;cursor:pointer;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto}
+.back-btn:hover{color:var(--b)}
+
+/* APP */
+#screen-app{flex-direction:column}
+.app-header{background:var(--v);padding:0 16px;display:flex;align-items:center;gap:10px;height:52px;flex-shrink:0;box-shadow:0 2px 12px rgba(0,0,0,.15);position:sticky;top:0;z-index:100}
+.app-header-logo{height:30px;width:auto;filter:brightness(0) invert(1);opacity:.9}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.mes-select{font-size:10px;padding:4px 8px;border:1px solid rgba(245,240,232,.25);border-radius:6px;background:rgba(255,255,255,.1);color:var(--b);cursor:pointer}
+.mes-select option{background:var(--v);color:var(--b)}
+.user-chip{display:flex;align-items:center;gap:6px}
+.user-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:var(--b)}
+.user-name{font-size:10px;color:var(--b);font-weight:500}
+.user-rol-tag{font-size:9px;color:var(--bdd)}
+.logout-btn{font-size:9px;padding:3px 9px;border-radius:99px;background:rgba(255,255,255,.15);color:var(--b);border:none;cursor:pointer;transition:.15s}
+.logout-btn:hover{background:rgba(255,255,255,.25)}
+.app-tabs{background:var(--v);display:flex;overflow-x:auto;padding:0 16px;border-bottom:2px solid rgba(255,255,255,.1);flex-shrink:0;-ms-overflow-style:none;scrollbar-width:none}
+.app-tabs::-webkit-scrollbar{display:none}
+.app-tab{padding:8px 14px;font-size:11px;font-weight:500;cursor:pointer;border:none;background:none;color:rgba(245,240,232,.5);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;transition:.15s}
+.app-tab:hover{color:rgba(245,240,232,.8)}
+.app-tab.active{color:var(--b);border-bottom:2px solid var(--bdd);font-weight:600}
+.tab-badge{font-size:8px;padding:1px 5px;border-radius:99px;background:var(--bdd);color:var(--v);font-weight:700}
+.app-content{padding:14px 16px;flex:1;overflow-y:auto}
+
+/* COMPONENTS */
+.sec{display:none}.sec.active{display:block}
+.sh{font-size:13px;font-weight:600;color:var(--v);margin-bottom:10px}
+.sh2{font-size:12px;font-weight:600;color:var(--v);margin-bottom:7px}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-bottom:14px}
+.kpi{background:var(--w);border:1px solid var(--brd);border-radius:var(--r);padding:12px;text-align:center;box-shadow:var(--shadow)}
+.kpi-n{font-size:22px;font-weight:700;color:var(--v);line-height:1.1}
+.kpi-l{font-size:10px;color:var(--txs);margin-top:3px}
+.card{background:var(--w);border:1px solid var(--brd);border-radius:var(--r);padding:14px;box-shadow:var(--shadow);margin-bottom:10px}
+.ibox{background:var(--v);color:var(--b);border-radius:8px;padding:9px 12px;font-size:11px;line-height:1.6;margin-bottom:10px}
+.ibox strong{color:var(--bdd)}
+.filt{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;align-items:center}
+.filt label{font-size:10px;color:var(--txs);font-weight:500}
+.fsel{font-size:11px;padding:5px 8px;border:1px solid var(--brd);border-radius:7px;background:var(--w);color:var(--tx)}
+.tbl-wrap{overflow-x:auto;border-radius:var(--r);border:1px solid var(--brd);box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:11px;background:var(--w)}
+thead th{text-align:left;padding:8px 10px;font-size:10px;font-weight:600;color:var(--txs);background:var(--bd);border-bottom:1px solid var(--brd);white-space:nowrap}
+tbody td{padding:7px 10px;border-bottom:.5px solid var(--bd);vertical-align:middle;color:var(--tx)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:rgba(201,185,154,.1)}
+.badge{display:inline-flex;align-items:center;font-size:9px;padding:2px 7px;border-radius:99px;font-weight:600;white-space:nowrap}
+.b-nuevo{background:#ddeef7;color:var(--az)}.b-proceso{background:#fef3dc;color:var(--am)}.b-final{background:#e0ede6;color:var(--vm)}.b-pend{background:#fce8e6;color:var(--rj)}.b-pausado{background:var(--bd);color:var(--txs)}
+.nota-ex{background:#e0ede6;color:var(--v)}.nota-bu{background:#fef3dc;color:var(--am)}.nota-re{background:#fce8e6;color:#e67e22}.nota-ba{background:#fce8e6;color:var(--rj)}.nota-nd{background:var(--bd);color:var(--txs)}
+.pri-a{color:var(--rj);font-weight:600;font-size:10px}.pri-m{color:var(--am);font-weight:600;font-size:10px}.pri-b{color:var(--vl);font-weight:600;font-size:10px}
+.tipo-def{background:#e0ede6;color:var(--v);font-size:9px;padding:1px 7px;border-radius:99px;font-weight:500}
+.tipo-pro{background:#fef3dc;color:var(--am);font-size:9px;padding:1px 7px;border-radius:99px;font-weight:500}
+.btn{font-size:11px;padding:6px 13px;border-radius:8px;border:1px solid;cursor:pointer;font-weight:500;transition:.15s;display:inline-flex;align-items:center;gap:5px}
+.btn-v{background:var(--v);color:var(--b);border-color:var(--v)}.btn-v:hover{background:var(--vm)}
+.btn-o{background:var(--w);color:var(--txs);border-color:var(--brd)}.btn-o:hover{background:var(--b)}
+.btn-ok{background:#e0ede6;color:var(--v);border-color:var(--vm)}.btn-ok:hover{background:var(--vm);color:var(--b)}
+.btn-dv{background:#fce8e6;color:var(--rj);border-color:#e8a09a}.btn-dv:hover{background:var(--rj);color:#fff}
+.btn-cm{background:#fef3dc;color:var(--am);border-color:#e8c97a}
+.btn-sm{font-size:10px;padding:3px 9px;border-radius:6px;border:1px solid var(--brd);background:var(--w);cursor:pointer;color:var(--txs);transition:.15s}
+.btn-sm:hover{border-color:var(--vm);color:var(--v);background:var(--b)}
+.btn-export{background:var(--vm);color:var(--b);border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;transition:.15s;display:inline-flex;align-items:center;gap:6px}
+.btn-export:hover{background:var(--v)}
+.fw{background:var(--w);border:1px solid var(--brd);border-radius:var(--r);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.fl{font-size:11px;color:var(--txs);margin-bottom:4px;font-weight:500}
+.fi{width:100%;padding:7px 10px;border:1px solid var(--brd);border-radius:8px;font-size:11px;color:var(--tx);background:var(--w);font-family:'DM Sans',sans-serif;transition:.15s}
+.fi:focus{outline:none;border-color:var(--vm);box-shadow:0 0 0 3px rgba(45,106,79,.1)}
+.fta{resize:vertical;min-height:60px}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.fg1{grid-template-columns:1fr;margin-bottom:8px}
+.fbns{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
+.chk{width:22px;height:22px;border-radius:5px;display:inline-flex;align-items:center;justify-content:center;font-size:12px;cursor:pointer;border:1.5px solid var(--bdd);background:var(--w);color:transparent;transition:.15s;user-select:none;flex-shrink:0}
+.chk.done{background:var(--vm);border-color:var(--v);color:var(--b)}
+.chk.late{background:#fef3dc;border-color:var(--am);color:var(--am)}
+.chk:hover:not(.done){border-color:var(--vm);background:var(--bd)}
+.ts-mini{font-size:8px;color:var(--vm);font-weight:500;display:block;line-height:1.2;margin-top:1px;white-space:nowrap}
+.ts-late{color:var(--am)!important}
+.tag-sem{background:#e0ede6;color:var(--v);font-size:8px;padding:1px 6px;border-radius:99px}
+.tag-mes{background:#f0eade;color:#7a5c2e;font-size:8px;padding:1px 6px;border-radius:99px}
+.prog-bar{display:flex;align-items:center;gap:8px;margin-top:10px;padding:10px 13px;background:var(--v);border-radius:var(--r)}
+.prog-track{flex:1;height:7px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;border-radius:99px;background:var(--bdd);transition:width .5s}
+.mini-bar{height:5px;background:var(--bd);border-radius:99px;overflow:hidden;flex:1}
+.mini-fill{height:100%;border-radius:99px;transition:width .4s}
+.nota-chip{font-size:10px;font-weight:600;padding:3px 10px;border-radius:99px;display:inline-block}
+.bono-tag{font-size:9px;font-weight:600;padding:2px 8px;border-radius:99px}
+.bono-ok{background:#e0ede6;color:var(--vm)}.bono-no{background:var(--bd);color:var(--txs)}
+.apro-card{background:var(--w);border:1px solid var(--brd);border-radius:var(--r);padding:13px;margin-bottom:10px;box-shadow:var(--shadow)}
+.apro-obs{font-size:11px;color:var(--txs);padding:8px 10px;background:var(--b);border-radius:8px;margin-bottom:10px;line-height:1.6;border:.5px solid var(--brd)}
+.com-item{background:var(--b);border:.5px solid var(--brd);border-radius:7px;padding:5px 9px;margin-bottom:5px;color:var(--txs);font-size:10px;line-height:1.5}
+.conj-card{background:var(--w);border:1px solid var(--brd);border-radius:var(--r);padding:14px;margin-bottom:8px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.conj-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.mes-bar-wrap{height:40px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:3px}
+.mes-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px}
+.ev-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:.5px solid var(--bd)}
+.ev-item:last-child{border-bottom:none}
+.ev-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.ev-hora{font-size:9px;color:var(--txt);width:34px;flex-shrink:0;font-family:'DM Mono',monospace}
+.ev-txt{font-size:11px;color:var(--tx);flex:1;line-height:1.4}
+.ev-badge{font-size:8px;padding:1px 6px;border-radius:99px;font-weight:500;white-space:nowrap}
+.admin-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;border:.5px solid var(--brd);margin-bottom:6px;background:var(--b)}
+.admin-av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--b);flex-shrink:0}
+.admin-name{font-size:11px;font-weight:500;color:var(--v)}
+.admin-sub{font-size:9px;color:var(--txs)}
+.admin-actions{margin-left:auto;display:flex;gap:4px;flex-shrink:0}
+.act-btn{font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--brd);background:var(--w);cursor:pointer;color:var(--txs);transition:.15s}
+.act-btn:hover{border-color:var(--vm);color:var(--v)}
+.act-btn.del:hover{border-color:var(--rj);color:var(--rj)}
+.rec-admin-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:8px;border:.5px solid var(--brd);margin-bottom:5px;background:var(--b)}
+.est-sel{font-size:10px;padding:4px 7px;border:1px solid var(--brd);border-radius:7px;background:var(--w);color:var(--tx)}
+.two-col{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:10px;margin-bottom:12px}
+/* ACCESOS */
+.access-item{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;border:.5px solid var(--brd);margin-bottom:6px;background:var(--b)}
+.access-email{font-size:11px;font-weight:500;color:var(--v);font-family:'DM Mono',monospace}
+.access-sub{font-size:9px;color:var(--txs)}
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;align-items:center;justify-content:center;padding:1rem}
+.overlay.open{display:flex}
+.modal{background:var(--w);border-radius:16px;padding:20px;width:100%;max-width:360px;border:1px solid var(--brd);box-shadow:0 20px 60px rgba(0,0,0,.2);max-height:90vh;overflow-y:auto}
+.modal-h{font-size:13px;font-weight:600;color:var(--v);margin-bottom:5px}
+.modal-s{font-size:11px;color:var(--txs);margin-bottom:14px;line-height:1.5}
+.upload-zone{border:2px dashed var(--brd);border-radius:10px;padding:18px;text-align:center;cursor:pointer;transition:.2s;margin-bottom:10px}
+.upload-zone:hover{border-color:var(--vm);background:rgba(45,106,79,.04)}
+.upload-zone input{display:none}
+.prev-img{width:100%;border-radius:8px;display:none;max-height:150px;object-fit:cover;margin-bottom:8px}
+.ts-box{font-size:10px;color:var(--v);background:#e0ede6;padding:6px 9px;border-radius:7px;margin-bottom:8px;display:none}
+#toast{position:fixed;bottom:20px;right:20px;background:var(--v);color:var(--b);padding:10px 16px;border-radius:10px;font-size:11px;font-weight:500;z-index:1000;opacity:0;transform:translateY(10px);transition:.3s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+#toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:600px){.user-name{display:none}.fg{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN — Ingreso por cédula -->
+<div id="screen-login" class="screen active">
+<div class="login-bg">
+  <img src="logo.png" alt="A&V Victoria Pineda" class="login-logo-pin"/>
+  <p class="login-tagline">SISTEMA DE GESTIÓN INTERNA</p>
+  <div class="cedula-card">
+    <p class="cedula-title">Ingresa tu número de cédula</p>
+    <p class="cedula-sub">Sin puntos ni espacios</p>
+    <input
+      id="cedula-input"
+      class="cedula-input"
+      type="number"
+      placeholder="Ej: 1144085135"
+      onkeydown="if(event.key==='Enter')loginCedula()"
+      autocomplete="off"
+    />
+    <button class="cedula-btn" onclick="loginCedula()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      Ingresar
+    </button>
+    <div id="cedula-error" class="cedula-error" style="display:none"></div>
+  </div>
+  <p class="login-footer-note">🔒 Acceso restringido · A&V Victoria Pineda Administraciones</p>
+</div>
+</div>
+
+<!-- APP -->
+<div id="screen-app" class="screen">
+  <header class="app-header">
+    <img id="app-header-logo" class="app-header-logo" src="logo.png" alt="A&V"/>
+    <div class="header-right">
+      <select id="mes-global" class="mes-select" onchange="onMesChange()">
+        <option>Febrero</option><option>Marzo</option><option>Abril</option><option selected>Mayo</option>
+        <option>Junio</option><option>Julio</option><option>Agosto</option>
+      </select>
+      <div class="user-chip">
+        <div id="hdr-av" class="user-av"></div>
+        <div><div id="hdr-name" class="user-name"></div><div id="hdr-rol" class="user-rol-tag"></div></div>
+      </div>
+      <button class="logout-btn" onclick="logout()">Salir</button>
+    </div>
+  </header>
+  <nav class="app-tabs" id="app-tabs"></nav>
+  <main class="app-content" id="app-content"></main>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="ov-foto">
+  <div class="modal">
+    <p class="modal-h" id="foto-modal-h">📷 Subir evidencia</p>
+    <p class="modal-s">Foto registrada con fecha y hora Colombia.</p>
+    <img id="foto-prev" class="prev-img" alt="preview"/>
+    <div class="upload-zone" onclick="document.getElementById('foto-file').click()">
+      <input type="file" id="foto-file" accept="image/*" onchange="handleFotoFile(event)">
+      <div style="font-size:24px;margin-bottom:6px">📷</div>
+      <p style="font-size:11px;color:var(--txs)">Toca para subir foto o pantallazo</p>
+    </div>
+    <div class="ts-box" id="foto-ts-box"></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-foto')">Cancelar</button>
+      <button class="btn btn-v" id="foto-confirm-btn" onclick="confirmarFoto()" disabled style="opacity:.4">Confirmar</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-com">
+  <div class="modal">
+    <p class="modal-h">💬 Comentario</p>
+    <p class="modal-s" id="com-task-name" style="color:var(--v);font-weight:500;font-size:12px"></p>
+    <div id="com-existing-list" style="margin-bottom:10px"></div>
+    <div class="fg1"><div><p class="fl">Nuevo comentario</p>
+    <textarea class="fi fta" id="com-textarea" placeholder="Escribe tu comentario..."></textarea></div></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-com')">Cancelar</button>
+      <button class="btn btn-v" onclick="guardarCom()">Guardar</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-nueva-rec">
+  <div class="modal" style="max-width:380px">
+    <p class="modal-h">➕ Nueva tarea recurrente</p>
+    <div class="fg1"><div><p class="fl">Nombre *</p><input class="fi" id="nr-nombre" placeholder="Nombre de la tarea"></div></div>
+    <div class="fg">
+      <div><p class="fl">Frecuencia</p><select class="fi" id="nr-frec"><option>mensual</option><option>semanal</option><option>quincenal</option></select></div>
+      <div><p class="fl">Evidencia</p><select class="fi" id="nr-tipo"><option value="manual">✎ Manual</option><option value="foto">📷 Foto</option><option value="auto">✉️ Auto-correo</option></select></div>
+    </div>
+    <div class="fg">
+      <div><p class="fl">Aplica a</p><select class="fi" id="nr-aplica"><option>Todos</option><option>Definitivos</option><option>Provisional (A&V)</option></select></div>
+      <div><p class="fl">Puntos (1–4)</p><select class="fi" id="nr-pts"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    </div>
+    <div class="fg1"><div><p class="fl">Cuándo</p><input class="fi" id="nr-cuando" placeholder="Ej: Primera semana del mes"></div></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-nueva-rec')">Cancelar</button>
+      <button class="btn btn-v" onclick="guardarNuevaRec()">Crear</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-nuevo-conj">
+  <div class="modal">
+    <p class="modal-h">🏢 Nuevo conjunto</p>
+    <div class="fg1"><div><p class="fl">Nombre *</p><input class="fi" id="nc-nombre" placeholder="Nombre del conjunto"></div></div>
+    <div class="fg">
+      <div><p class="fl">Tipo</p><select class="fi" id="nc-tipo"><option value="def">Definitivo</option><option value="pro">Provisional (A&V)</option></select></div>
+      <div><p class="fl">Ciudad</p><input class="fi" id="nc-ciudad" value="Cali"></div>
+    </div>
+    <div class="fg1"><div><p class="fl">Delegado principal</p><select class="fi" id="nc-del"></select></div></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-nuevo-conj')">Cancelar</button>
+      <button class="btn btn-v" onclick="guardarNuevoConj()">Crear</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-nuevo-del">
+  <div class="modal">
+    <p class="modal-h">👤 Nuevo usuario</p>
+    <div class="fg">
+      <div><p class="fl">Nombre *</p><input class="fi" id="nd-nombre" placeholder="Nombre completo"></div>
+      <div><p class="fl">Rol</p><select class="fi" id="nd-rol"><option value="delegado">Delegado</option><option value="staff">Staff / Gerencia</option></select></div>
+    </div>
+    <div class="fg1"><div><p class="fl">Correo principal (para acceso) *</p><input class="fi" id="nd-email" type="email" placeholder="correo@gmail.com o corporativo"></div></div>
+    <div class="fg1"><div><p class="fl">Correo alternativo (opcional)</p><input class="fi" id="nd-email2" type="email" placeholder="otro.correo@gmail.com"></div></div>
+    <div class="fg">
+      <div><p class="fl">Cargo</p><input class="fi" id="nd-cargo" placeholder="Ej: Delegada"></div>
+      <div><p class="fl">Tipo equipo</p><select class="fi" id="nd-equipo"><option>Definitivos</option><option>Provisional (A&V)</option><option>Ambos</option></select></div>
+    </div>
+    <div class="fg1"><div><p class="fl">Conjuntos asignados (Ctrl+click para varios)</p>
+    <select class="fi" id="nd-conjs" multiple style="height:80px"></select></div></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-nuevo-del')">Cancelar</button>
+      <button class="btn btn-v" onclick="guardarNuevoDel()">Crear usuario</button>
+    </div>
+  </div>
+</div>
+<div class="overlay" id="ov-acceso">
+  <div class="modal" style="max-width:380px">
+    <p class="modal-h">🔑 Habilitar acceso</p>
+    <p class="modal-s">Agrega el correo de la persona que tendrá acceso al sistema. Puedes agregar correo personal y corporativo del mismo usuario.</p>
+    <div class="fg1"><div><p class="fl">Correo electrónico *</p><input class="fi" id="acc-email" type="email" placeholder="correo@gmail.com o corporativo"></div></div>
+    <div class="fg">
+      <div><p class="fl">Nombre visible</p><input class="fi" id="acc-nombre" placeholder="Nombre del usuario"></div>
+      <div><p class="fl">Rol</p><select class="fi" id="acc-rol"><option value="delegado">Delegado</option><option value="staff">Staff / Gerencia</option></select></div>
+    </div>
+    <div class="fg1"><div><p class="fl">Vinculado al perfil</p><select class="fi" id="acc-perfil"></select></div></div>
+    <div class="fbns">
+      <button class="btn btn-o" onclick="closeOv('ov-acceso')">Cancelar</button>
+      <button class="btn btn-v" onclick="guardarAcceso()">Habilitar acceso</button>
+    </div>
+  </div>
+</div>
+<div id="toast">✓ Guardado</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+// LOGO — inyectado via base64
+// ══════════════════════════════════════════════════════
+    const el=document.getElementById(id);
+  });
+
+// ══════════════════════════════════════════════════════
+// ACCESOS — lista maestra de correos autorizados
+// Cada entrada: {email, nombre, rol, perfilIdx}
+// ══════════════════════════════════════════════════════
+let ACCESOS = [
+  // STAFF — CORREOS REALES HABILITADOS
+  {email:"victoriaepineda@gmail.com",      nombre:"Victoria Ramos",  rol:"staff",    perfilIdx:0},
+  {email:"victoriapineda@ayvadmon.com",    nombre:"Victoria Ramos",  rol:"staff",    perfilIdx:0},
+  {email:"paulsebas15@gmail.com",          nombre:"Paul",            rol:"staff",    perfilIdx:1},
+  {email:"tesoreriaayv@gmail.com",         nombre:"Tania Castro",    rol:"staff",    perfilIdx:2},
+  // DELEGADOS
+  {email:"camila@avadministraciones.com",   nombre:"Camila Ospina",   rol:"delegado", perfilIdx:3},
+  {email:"marutzy@avadministraciones.com",  nombre:"Marutzy Aguirre", rol:"delegado", perfilIdx:4},
+  {email:"nicolas@avadministraciones.com",  nombre:"Nicolás Borja",   rol:"delegado", perfilIdx:5},
+  {email:"jorge@avadministraciones.com",    nombre:"Jorge Carrillo",  rol:"delegado", perfilIdx:6},
+  {email:"lorena@avadministraciones.com",   nombre:"Lorena Sánchez",  rol:"delegado", perfilIdx:7},
+  {email:"angel@avadministraciones.com",    nombre:"Ángel Valencia",  rol:"delegado", perfilIdx:8},
+  {email:"andres@avadministraciones.com",   nombre:"Andrés Serna",    rol:"delegado", perfilIdx:9},
+  {email:"juandiego@avadministraciones.com",nombre:"Juan Diego Carrillo",rol:"delegado",perfilIdx:10},
+];
+
+const MESES = ["Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto"];
+
+let DATA = {
+  conjuntos:{
+    def:[
+      {n:"Moka",del:"Camila Ospina",c:"#1a3d2b",eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Arboleda Cañasgordas",del:"Marutzy Aguirre",c:"#2d6a4f",eval:{Febrero:95.2,Marzo:95.5,Abril:75.9,Mayo:53.3,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Torres del Alférez",del:"Marutzy Aguirre",c:"#2d6a4f",eval:{Febrero:76.2,Marzo:90.9,Abril:65.5,Mayo:40,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Balcones del Río",del:"Nicolás Borja",c:"#b7791f",eval:{Febrero:76.2,Marzo:81.8,Abril:51.7,Mayo:30,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Margaritas",del:"Nicolás Borja",c:"#b7791f",eval:{Febrero:100,Marzo:100,Abril:0,Mayo:100,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Camelias",del:"Jorge Carrillo",c:"#7a5c2e",eval:{Febrero:71.4,Marzo:90.9,Abril:71.4,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Altos del Jockey",del:"Lorena Sánchez",c:"#5a7a6a",eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Casas del Alférez",del:"Camila Ospina",c:"#1a3d2b",eval:{Febrero:88.1,Marzo:93.2,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Essenza",del:"Ángel Valencia",c:"#3d8c68",eval:{Febrero:85.7,Marzo:95.5,Abril:55.2,Mayo:56.7,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+    ],
+    pro:[
+      {n:"Chipichape Living",del:"Andrés Serna",c:"#b7791f",eval:{Febrero:100,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Arbopance",del:"Andrés Serna",c:"#b7791f",eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Brissea",del:"Juan Diego Carrillo",c:"#7a5c2e",eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+      {n:"Macadamia",del:"Juan Diego Carrillo",c:"#7a5c2e",eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}},
+    ]
+  },
+  usuarios:[
+    {n:"Victoria Ramos",  email:"victoria@avadministraciones.com", rol:"staff",    cargo:"Gerente · Rep. Legal",     av:"VR",c:"#1a3d2b",ra:"victoria",equipo:"Ambos",   conjuntos:[]},
+    {n:"Paul",            email:"paul@avadministraciones.com",     rol:"staff",    cargo:"Director de Procesos",     av:"PA",c:"#2d6a4f",ra:"paul",    equipo:"Ambos",   conjuntos:[]},
+    {n:"Tania Castro",    email:"tania@avadministraciones.com",    rol:"staff",    cargo:"Directora Administrativa", av:"TC",c:"#3d8c68",ra:"tania",   equipo:"Ambos",   conjuntos:[]},
+    {n:"Camila Ospina",   email:"camila@avadministraciones.com",   rol:"delegado", cargo:"Delegada",                 av:"CO",c:"#7a5c2e",ra:"delegado",equipo:"Definitivos",   conjuntos:["Moka","Casas del Alférez"]},
+    {n:"Marutzy Aguirre", email:"marutzy@avadministraciones.com",  rol:"delegado", cargo:"Delegada",                 av:"MA",c:"#5a7a6a",ra:"delegado",equipo:"Definitivos",   conjuntos:["Arboleda Cañasgordas","Torres del Alférez"]},
+    {n:"Nicolás Borja",   email:"nicolas@avadministraciones.com",  rol:"delegado", cargo:"Delegado",                 av:"NB",c:"#b7791f",ra:"delegado",equipo:"Definitivos",   conjuntos:["Balcones del Río","Margaritas"]},
+    {n:"Jorge Carrillo",  email:"jorge@avadministraciones.com",    rol:"delegado", cargo:"Delegado",                 av:"JC",c:"#7a5c2e",ra:"delegado",equipo:"Definitivos",   conjuntos:["Camelias"]},
+    {n:"Lorena Sánchez",  email:"lorena@avadministraciones.com",   rol:"delegado", cargo:"Delegada",                 av:"LS",c:"#5a7a6a",ra:"delegado",equipo:"Definitivos",   conjuntos:["Altos del Jockey"]},
+    {n:"Ángel Valencia",  email:"angel@avadministraciones.com",    rol:"delegado", cargo:"Delegado",                 av:"AV",c:"#3d8c68",ra:"delegado",equipo:"Definitivos",   conjuntos:["Essenza"]},
+    {n:"Andrés Serna",    email:"andres@avadministraciones.com",   rol:"delegado", cargo:"Delegado A&V",             av:"AS",c:"#b7791f",ra:"delegado",equipo:"Provisional (A&V)",conjuntos:["Chipichape Living","Arbopance"]},
+    {n:"Juan Diego Carrillo",email:"juandiego@avadministraciones.com",rol:"delegado",cargo:"Delegado A&V",           av:"JD",c:"#7a5c2e",ra:"delegado",equipo:"Provisional (A&V)",conjuntos:["Brissea","Macadamia"]},
+  ],
+  tareasRec:[
+    {n:"Envío movimientos y extracto",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"Primer día hábil",pts:1},
+    {n:"Pago retefuente",frec:"mensual",tipo:"manual",aplica:"Todos",cuando:"Antes del vencimiento",pts:1},
+    {n:"Pago reteica",frec:"mensual",tipo:"manual",aplica:"Todos",cuando:"Antes del vencimiento",pts:1},
+    {n:"Facturación a copropietarios",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"Primera semana",pts:1},
+    {n:"Envío movimientos y recaudos (día 10–11)",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"El 10 o siguiente día hábil",pts:1},
+    {n:"Gestión de cartera",frec:"mensual",tipo:"manual",aplica:"Todos",cuando:"Después de actualización cartera",pts:3},
+    {n:"Envío paquete contable",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"Primera semana del siguiente mes",pts:2},
+    {n:"Gestión pagos a proveedores",frec:"mensual",tipo:"manual",aplica:"Todos",cuando:"Del 20 al 25 de cada mes",pts:1},
+    {n:"Envío recibo servicios públicos",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"Al llegar al conjunto",pts:1},
+    {n:"Revisión cronograma mantenimientos",frec:"mensual",tipo:"foto",aplica:"Todos",cuando:"Primera y última semana",pts:2},
+    {n:"Recorrido de inspección",frec:"semanal",tipo:"foto",aplica:"Todos",cuando:"1-2 veces por semana",pts:1},
+    {n:"Informe gestión + convocatoria consejo",frec:"mensual",tipo:"auto",aplica:"Definitivos",cuando:"1 semana antes de la reunión",pts:3},
+    {n:"Reunión de consejo de adm.",frec:"mensual",tipo:"foto",aplica:"Definitivos",cuando:"Según programación del consejo",pts:1},
+    {n:"Envío acta de reunión",frec:"mensual",tipo:"auto",aplica:"Definitivos",cuando:"Semana siguiente a la reunión",pts:2},
+    {n:"Ejecución presupuesto y proyectos",frec:"mensual",tipo:"manual",aplica:"Definitivos",cuando:"En el transcurso del mes",pts:3},
+    {n:"Envío boletín informativo",frec:"mensual",tipo:"auto",aplica:"Todos",cuando:"Primera semana",pts:3},
+    {n:"Comunicación convivencia semanal",frec:"semanal",tipo:"auto",aplica:"Todos",cuando:"1 por semana",pts:2},
+    {n:"Ejecución tareas Drive",frec:"mensual",tipo:"manual",aplica:"Definitivos",cuando:"En el transcurso del mes",pts:3},
+    {n:"Radicación cuenta constructora Bolívar",frec:"mensual",tipo:"auto",aplica:"Provisional (A&V)",cuando:"Antes del 7 de cada mes",pts:4},
+    {n:"Informe gestión a Jennifer",frec:"mensual",tipo:"auto",aplica:"Provisional (A&V)",cuando:"Última semana del mes",pts:3},
+    {n:"Actualización base de datos y app",frec:"semanal",tipo:"manual",aplica:"Provisional (A&V)",cuando:"Mínimo 2 veces por semana",pts:1},
+    {n:"Gestión documentos entrega",frec:"mensual",tipo:"manual",aplica:"Provisional (A&V)",cuando:"Avanzar cada mes",pts:2},
+    {n:"Recorrido con postventa + PQR",frec:"semanal",tipo:"foto",aplica:"Provisional (A&V)",cuando:"Cuando aplique (condicional)",pts:1},
+  ],
+  tareasEve:[
+    {id:"T-001",n:"Cotizar cambio de tapetes torres A y B",tipo:"Cotización",conj:"Arboleda Cañasgordas",enc:"Marutzy Aguirre",ra:"paul",apr:"Paul",pri:"Alta",est:"Pendiente aprobación",reg:"12/05",vence:"20/05",obs:"Cotización recibida de Alexander. Valor: $3.200.000. Llevar a consejo.",coms:[]},
+    {id:"T-002",n:"Comunicado balcones — 5 aptos",tipo:"Comunicado",conj:"Moka",enc:"Camila Ospina",ra:"tania",apr:"Tania",pri:"Alta",est:"Pendiente aprobación",reg:"14/05",vence:"18/05",obs:"Aptos A301, B204, C108, D502, E301. Carta lista, pendiente revisión.",coms:[]},
+    {id:"T-003",n:"Arreglo humedad apto 201D",tipo:"Trabajo",conj:"Torres del Alférez",enc:"Marutzy Aguirre",ra:"tania",apr:"Tania",pri:"Alta",est:"En proceso",reg:"10/05",vence:"25/05",obs:"Proviene del 501. Revisión con plomero programada para el jueves.",coms:[]},
+    {id:"T-004",n:"Renovar contrato Omega — 3 años",tipo:"Documento",conj:"Arboleda Cañasgordas",enc:"Marutzy Aguirre",ra:"victoria",apr:"Victoria",pri:"Alta",est:"Pendiente aprobación",reg:"08/05",vence:"31/05",obs:"Propuesta con descuento del 5% por 3 años. Requiere aprobación y firma de gerencia.",coms:[]},
+    {id:"T-005",n:"Informe mensual gestión mayo",tipo:"Documento",conj:"Balcones del Río",enc:"Nicolás Borja",ra:"paul",apr:"Paul",pri:"Media",est:"En proceso",reg:"20/05",vence:"30/05",obs:"Incluir avances de piscina, desfibrilador y obra de fachada.",coms:[]},
+    {id:"T-006",n:"Revisión bomba piscina — Symel",tipo:"Cotización",conj:"Moka",enc:"Camila Ospina",ra:"paul",apr:"Paul",pri:"Alta",est:"Nuevo",reg:"22/05",vence:"28/05",obs:"Solicitar diagnóstico del equipo. Coordinar visita esta semana.",coms:[]},
+    {id:"T-007",n:"Boletín informativo junio 2026",tipo:"Comunicado",conj:"Margaritas",enc:"Nicolás Borja",ra:"tania",apr:"Tania",pri:"Baja",est:"Nuevo",reg:"21/05",vence:"01/06",obs:"Incluir tema cargadores eléctricos y nuevas normas de mascotas.",coms:[]},
+    {id:"T-008",n:"Censo mascotas y empleadas",tipo:"Documento",conj:"Camelias",enc:"Jorge Carrillo",ra:"tania",apr:"Tania",pri:"Media",est:"En proceso",reg:"13/05",vence:"31/05",obs:"Google Form creado. Pendiente socializar a residentes.",coms:[]},
+    {id:"T-009",n:"Llamado de atención balcones E301–E305",tipo:"Llamado de atención",conj:"Arboleda Cañasgordas",enc:"Marutzy Aguirre",ra:"tania",apr:"Tania",pri:"Media",est:"Pendiente aprobación",reg:"19/05",vence:"23/05",obs:"5 aptos con ropa colgada. Cartas redactadas, pendiente revisión.",coms:[]},
+    {id:"T-010",n:"Programar asamblea ordinaria agosto",tipo:"Documento",conj:"Torres del Alférez",enc:"Marutzy Aguirre",ra:"victoria",apr:"Victoria",pri:"Alta",est:"Nuevo",reg:"20/05",vence:"15/06",obs:"Confirmar fecha, lugar y orden del día con consejo.",coms:[]},
+    {id:"T-011",n:"Radicación cuenta constructora mayo",tipo:"Documento",conj:"Chipichape Living",enc:"Andrés Serna",ra:"paul",apr:"Paul",pri:"Alta",est:"Finalizado",reg:"05/05",vence:"07/05",obs:"Radicado correctamente ante Constructora Bolívar.",coms:[]},
+    {id:"T-012",n:"Actualización app Chipichape — semana 3",tipo:"Documento",conj:"Chipichape Living",enc:"Andrés Serna",ra:"paul",apr:"Paul",pri:"Media",est:"En proceso",reg:"19/05",vence:"25/05",obs:"Base de datos con 45 propietarios actualizados. Falta torre D.",coms:[]},
+  ],
+};
+
+let ESTADO={};
+function buildEstado(){
+  allConjs().forEach(c=>{
+    if(!ESTADO[c.n]) ESTADO[c.n]=DATA.tareasRec.map(()=>({sc:{done:false,ts:null,foto:null},s1:{done:false,ts:null,foto:null},s2:{done:false,ts:null,foto:null},s3:{done:false,ts:null,foto:null},s4:{done:false,ts:null,foto:null}}));
+  });
+}
+let REC_COMS={};
+function buildRecComs(){allConjs().forEach(c=>{if(!REC_COMS[c.n])REC_COMS[c.n]=DATA.tareasRec.map(()=>[]);});}
+buildEstado();buildRecComs();
+window.addEventListener('DOMContentLoaded', renderUserCards);
+
+let ME=null,curTab='',fotoI=null,fotoC=null,fotoUrl=null,comI=null,comType=null,conjSelRec=null;
+
+// ══════════════════════════════════════════════════════
+// AUTH — SISTEMA CÉDULA
+// ══════════════════════════════════════════════════════
+
+// Lista maestra: cédula → índice de DATA.usuarios
+// activo:false = delegado deshabilitado por el admin
+const CEDULAS = {
+  // ── GERENCIA (siempre activos, no se pueden deshabilitar) ──
+  '38877468':  { idx:0,  rol:'staff'    },  // Victoria Eugenia Pineda
+  '1144085135':{ idx:1,  rol:'staff'    },  // Paul Sebastian Molina
+  '38877900':  { idx:2,  rol:'staff'    },  // Tania Paola Serna
+  // ── DELEGADOS (habilitados/deshabilitados por admin) ──
+  '1109920842':{ idx:3,  rol:'delegado', activo:false },  // Camila Ospina
+  '1113362062':{ idx:4,  rol:'delegado', activo:false },  // Marutzy Aguirre
+  '1192760695':{ idx:5,  rol:'delegado', activo:false },  // Nicolas Borja
+  '1143982683':{ idx:6,  rol:'delegado', activo:false },  // Jorge Eduardo Carrillo
+  '25528884':  { idx:7,  rol:'delegado', activo:false },  // Lorena Sanchez
+  '1006463314':{ idx:8,  rol:'delegado', activo:false },  // Angel Valencia
+  '94481361':  { idx:9,  rol:'delegado', activo:false },  // Alejandro Carmona
+  '1115082856':{ idx:10, rol:'delegado', activo:false },  // Andres Felipe Serna
+  '1193391893':{ idx:11, rol:'delegado', activo:false },  // Juan Diego Carrillo
+};
+
+function loginCedula() {
+  const input = document.getElementById('cedula-input');
+  const errEl = document.getElementById('cedula-error');
+  const cedula = (input.value || '').toString().trim().replace(/\D/g,'');
+
+  if (!cedula) {
+    mostrarErrorLogin('Ingresa tu número de cédula', 'no-access');
+    input.focus();
+    return;
+  }
+
+  const acceso = CEDULAS[cedula];
+  errEl.style.display = 'none';
+
+  if (!acceso) {
+    mostrarErrorLogin('⚠️ Cédula no registrada en el sistema.<br>Contacta al administrador.', 'no-access');
+    input.select();
+    return;
+  }
+
+  if (acceso.rol === 'delegado' && !acceso.activo) {
+    mostrarErrorLogin('🚫 Tu acceso aún no está habilitado.<br>Comunícate con el equipo de gerencia.', 'bloqueado');
+    input.select();
+    return;
+  }
+
+  // ✓ Acceso concedido
+  input.value = '';
+  login(acceso.idx);
+}
+
+function mostrarErrorLogin(msg, tipo) {
+  const el = document.getElementById('cedula-error');
+  el.innerHTML = msg;
+  el.className = 'cedula-error ' + tipo;
+  el.style.display = 'block';
+  setTimeout(() => { if(el) el.style.display = 'none'; }, 5000);
+}
+
+function showLogin() {
+  document.getElementById('screen-app').style.display = 'none';
+  document.getElementById('screen-login').style.display = 'block';
+  const inp = document.getElementById('cedula-input');
+  if (inp) { inp.value = ''; inp.focus(); }
+  const err = document.getElementById('cedula-error');
+  if (err) err.style.display = 'none';
+}
+
+function login(idx){
+  ME = DATA.usuarios[idx];
+  document.getElementById('screen-login').style.display = 'none';
+  const app = document.getElementById('screen-app');
+  app.style.display = 'flex';
+  app.style.flexDirection = 'column';
+  document.getElementById('hdr-av').textContent = ME.av;
+  document.getElementById('hdr-av').style.background = ME.c;
+  document.getElementById('hdr-name').textContent = ME.n;
+  document.getElementById('hdr-rol').textContent = ME.cargo;
+  buildTabs();
+}
+function logout(){ ME = null; showLogin(); }
+
+
+
+// ══ NAV ═══════════════════════════════════════════════
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+const TABS_STAFF=[{id:'dash',label:'📊 Dashboard'},{id:'rec',label:'📋 Recurrentes'},{id:'eve',label:'📌 Eventuales'},{id:'apro',label:'✅ Aprobaciones',badge:true},{id:'rend',label:'🏆 Rendimiento'},{id:'inf',label:'📄 Informes'},{id:'adm',label:'⚙️ Admin'}];
+const TABS_DEL=[{id:'rec',label:'📋 Mis Recurrentes'},{id:'mis-eve',label:'📌 Mis Eventuales'},{id:'nueva-eve',label:'➕ Nueva Tarea'}];
+function buildTabs(){
+  const tabs=ME.rol==='staff'?TABS_STAFF:TABS_DEL;
+  document.getElementById('app-tabs').innerHTML=tabs.map((t,i)=>`<button class="app-tab ${i===0?'active':''}" onclick="goTab('${t.id}',this)">${t.label}${t.badge?`<span class="tab-badge" id="apro-badge">${pendCount()}</span>`:''}</button>`).join('');
+  goTabId(tabs[0].id);
+}
+function goTab(id,btn){document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active');goTabId(id);}
+function goTabId(id){
+  curTab=id;const c=document.getElementById('app-content');
+  if(id==='dash')c.innerHTML=rDash();
+  else if(id==='rec'){conjSelRec=conjSelRec||getMyConjs()[0];c.innerHTML=rRec();}
+  else if(id==='eve')c.innerHTML=rEve();
+  else if(id==='mis-eve')c.innerHTML=rMisEve();
+  else if(id==='nueva-eve')c.innerHTML=rNuevaEve();
+  else if(id==='apro')c.innerHTML=rApro();
+  else if(id==='rend')c.innerHTML=rRend();
+  else if(id==='inf')c.innerHTML=rInf();
+  else if(id==='adm')c.innerHTML=rAdm();
+}
+function onMesChange(){goTabId(curTab);}
+function getMes(){return document.getElementById('mes-global')?.value||'Mayo';}
+
+// ══ HELPERS ═══════════════════════════════════════════
+function allConjs(){return[...DATA.conjuntos.def,...DATA.conjuntos.pro];}
+function getMyConjs(){if(ME.rol==='staff')return allConjs().map(c=>c.n);return ME.conjuntos||[];}
+function pendCount(){return DATA.tareasEve.filter(e=>e.est==='Pendiente aprobación').length;}
+function notaInfo(p){if(p<=0)return{t:"Sin datos",c:"nota-nd",bar:"#d4c8b0"};if(p>=90)return{t:"Excelente",c:"nota-ex",bar:"#2d6a4f"};if(p>=80)return{t:"Bueno",c:"nota-bu",bar:"#b7791f"};if(p>=75)return{t:"Regular",c:"nota-re",bar:"#e67e22"};return{t:"Bajo",c:"nota-ba",bar:"#c0392b"};}
+function bonoVal(p){if(p>=90)return 150000;if(p>=80)return 100000;if(p>=75)return 50000;return 0;}
+function bonoFmt(p){const v=bonoVal(p);return v?'$'+v.toLocaleString('es-CO'):'Sin bono';}
+function tsCol(){const now=new Date(new Date().toLocaleString("en-US",{timeZone:"America/Bogota"}));return`${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+function openOv(id){document.getElementById(id).classList.add('open');}
+function closeOv(id){document.getElementById(id).classList.remove('open');}
+const EB={"Nuevo":"b-nuevo","En proceso":"b-proceso","Finalizado":"b-final","Pendiente aprobación":"b-pend","Pausado":"b-pausado"};
+const PC={"Alta":"pri-a","Media":"pri-m","Baja":"pri-b"};
+const EST_DEL=["Nuevo","En proceso","Pendiente aprobación"];
+const EST_ALL=["Nuevo","En proceso","Pendiente aprobación","Finalizado","Pausado"];
+
+// ══ DASHBOARD ═════════════════════════════════════════
+function rDash(){
+  const mes=getMes();const pend=pendCount();const enp=DATA.tareasEve.filter(e=>e.est==='En proceso').length;const fin=DATA.tareasEve.filter(e=>e.est==='Finalizado').length;
+  const activos=allConjs().filter(c=>c.eval[mes]>0);const prom=activos.length?Math.round(activos.reduce((a,c)=>a+c.eval[mes],0)/activos.length):0;
+  return`<div>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-n">${DATA.tareasEve.length}</div><div class="kpi-l">Eventuales</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--rj)">${pend}</div><div class="kpi-l">Pte. aprobación</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--am)">${enp}</div><div class="kpi-l">En proceso</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--vm)">${fin}</div><div class="kpi-l">Finalizadas</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--v)">${prom}%</div><div class="kpi-l">Prom. evaluación</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--v)">${activos.length}/${allConjs().length}</div><div class="kpi-l">Conjuntos activos</div></div>
+    </div>
+    <p class="sh">Actividad reciente</p>
+    ${DATA.tareasEve.slice(0,5).map(e=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--w);border:.5px solid var(--brd);border-radius:9px;margin-bottom:6px;box-shadow:var(--shadow)"><span class="badge ${EB[e.est]||'b-nuevo'}">${e.est}</span><span style="font-size:11px;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${e.n}</span><span style="font-size:10px;color:var(--txs);white-space:nowrap">${e.conj.split(' ')[0]}</span></div>`).join('')}
+    <p class="sh" style="margin-top:1rem">Evaluación ${mes}</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Conjunto</th><th>Delegado</th><th>%</th><th>Nota</th><th>Bono</th></tr></thead>
+    <tbody>${allConjs().filter(c=>c.eval[mes]>0).sort((a,b)=>b.eval[mes]-a.eval[mes]).map(c=>{const p=c.eval[mes];const ni=notaInfo(p);return`<tr><td style="font-weight:500">${c.n}</td><td style="color:var(--txs)">${c.del}</td><td><div style="display:flex;align-items:center;gap:6px"><div class="mini-bar"><div class="mini-fill" style="width:${p}%;background:${ni.bar}"></div></div><span style="font-size:11px;font-weight:600;color:${ni.bar};width:36px">${p}%</span></div></td><td><span class="nota-chip ${ni.c}">${ni.t}</span></td><td style="font-weight:600;color:${bonoVal(p)?'var(--vm)':'var(--txs)'};font-size:11px">${bonoFmt(p)}</td></tr>`;}).join('')}</tbody></table></div>
+  </div>`;
+}
+
+// ══ RECURRENTES ════════════════════════════════════════
+function rRec(){
+  const isStaff=ME.rol==='staff';const myConjs=getMyConjs();
+  if(!conjSelRec||!myConjs.includes(conjSelRec))conjSelRec=myConjs[0];
+  const conjObj=allConjs().find(c=>c.n===conjSelRec);
+  const tipo=DATA.conjuntos.pro.find(c=>c.n===conjSelRec)?'Provisional (A&V)':'Definitivos';
+  const tareas=DATA.tareasRec.filter(t=>t.aplica==='Todos'||t.aplica===tipo||t.aplica===tipo.split(' ')[0]);
+  if(!ESTADO[conjSelRec]){ESTADO[conjSelRec]=DATA.tareasRec.map(()=>({sc:{done:false,ts:null,foto:null},s1:{done:false,ts:null,foto:null},s2:{done:false,ts:null,foto:null},s3:{done:false,ts:null,foto:null},s4:{done:false,ts:null,foto:null}}));REC_COMS[conjSelRec]=DATA.tareasRec.map(()=>[]);}
+  let done=0,tot=0;tareas.forEach((_,i)=>{const ri=DATA.tareasRec.indexOf(tareas[i]);['sc','s1','s2','s3','s4'].forEach(c=>{tot++;if(ESTADO[conjSelRec][ri]?.[c]?.done)done++;});});
+  const pct=tot?Math.round(done/tot*100):0;const ni=notaInfo(pct);
+  const ticoL={auto:'✉️',foto:'📷',manual:'✎'};
+  const conjs_opts=myConjs.map(n=>`<option value="${n}" ${n===conjSelRec?'selected':''}>${n}</option>`).join('');
+  return`<div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+      ${isStaff?`<button class="btn btn-v" onclick="openOv('ov-nueva-rec')" style="font-size:10px">➕ Nueva tarea</button>`:''}
+      <div style="display:flex;align-items:center;gap:6px"><label style="font-size:10px;color:var(--txs)">Conjunto:</label>
+      <select class="fsel" onchange="conjSelRec=this.value;goTabId('rec')">${conjs_opts}</select></div>
+    </div>
+    <div class="ibox"><strong>${conjSelRec}</strong> · ${tipo} · Delegado: ${conjObj?.del||'–'} · ${getMes()} 2026</div>
+    <div style="display:flex;gap:10px;margin-bottom:8px;font-size:10px;color:var(--txs)">
+      <span style="display:flex;align-items:center;gap:3px"><span class="chk done" style="width:15px;height:15px;font-size:9px;pointer-events:none">✓</span>Hecha</span>
+      <span style="display:flex;align-items:center;gap:3px"><span class="chk late" style="width:15px;height:15px;font-size:9px;pointer-events:none">!</span>Fuera de tiempo</span>
+      <span style="display:flex;align-items:center;gap:3px"><span class="chk" style="width:15px;height:15px;pointer-events:none"></span>Pendiente</span>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th style="min-width:155px">Tarea</th><th>Frec.</th>
+      <th style="text-align:center">SC</th><th style="text-align:center">S1</th><th style="text-align:center">S2</th><th style="text-align:center">S3</th><th style="text-align:center">S4</th>
+      <th style="text-align:center">%</th><th style="text-align:center">💬</th></tr></thead>
+      <tbody>${tareas.map(t=>{
+        const i=DATA.tareasRec.indexOf(t);
+        const celdas=['sc','s1','s2','s3','s4'].map(col=>{
+          const s=ESTADO[conjSelRec]?.[i]?.[col];
+          if(!s)return`<td style="text-align:center"><span style="color:var(--txt)">–</span></td>`;
+          const ico=ticoL[t.tipo]||'✎';
+          return`<td style="text-align:center"><div style="display:flex;flex-direction:column;align-items:center;gap:1px"><span class="chk ${s.done?'done':''}" data-i="${i}" data-c="${col}" data-tipo="${t.tipo}" data-n="${t.n}" onclick="toggleRec(this)">${s.done?'✓':''}</span>${s.done&&s.ts?`<span class="ts-mini">${s.ts}</span>`:`<span style="font-size:9px;color:var(--txt)">${ico}</span>`}</div></td>`;
+        });
+        const hechas=['sc','s1','s2','s3','s4'].filter(c=>ESTADO[conjSelRec]?.[i]?.[c]?.done).length;
+        const p=Math.round(hechas/5*100);const col=p>=80?'var(--v)':p>=60?'var(--am)':'var(--rj)';
+        const coms=REC_COMS[conjSelRec]?.[i]||[];
+        return`<tr><td><span style="font-size:11px;margin-right:4px">${ticoL[t.tipo]}</span><span style="font-size:11px">${t.n}</span></td><td><span class="${t.frec==='semanal'?'tag-sem':'tag-mes'}">${t.frec}</span></td>${celdas.join('')}<td style="text-align:center"><span style="font-size:10px;font-weight:600;background:${col}18;color:${col};padding:2px 7px;border-radius:99px">${p}%</span></td><td style="text-align:center"><button class="btn-sm" onclick="abrirComRec(${i})">${coms.length?`💬${coms.length}`:'💬'}</button></td></tr>`;
+      }).join('')}</tbody></table></div>
+    <div class="prog-bar"><span style="font-size:11px;color:var(--b);font-weight:500">Avance ${conjSelRec}</span><div class="prog-track"><div class="prog-fill" style="width:${pct}%"></div></div><span style="font-size:13px;font-weight:700;color:var(--b);width:38px;text-align:right">${pct}%</span><span class="nota-chip ${ni.c}">${ni.t}</span></div>
+  </div>`;
+}
+function toggleRec(el){
+  const i=parseInt(el.dataset.i),col=el.dataset.c,tipo=el.dataset.tipo,nombre=el.dataset.n;
+  if(tipo==='foto'&&!ESTADO[conjSelRec][i][col].done){fotoI=i;fotoC=col;document.getElementById('foto-modal-h').textContent='📷 Evidencia: '+nombre;document.getElementById('foto-prev').style.display='none';document.getElementById('foto-ts-box').style.display='none';document.getElementById('foto-confirm-btn').disabled=true;document.getElementById('foto-confirm-btn').style.opacity='.4';document.getElementById('foto-file').value='';fotoUrl=null;openOv('ov-foto');return;}
+  const s=ESTADO[conjSelRec][i][col];s.done=!s.done;s.ts=s.done?tsCol():null;s.foto=null;
+  goTabId('rec');if(s.done)toast('✓ '+nombre.substring(0,30));
+}
+
+// ══ EVENTUALES ════════════════════════════════════════
+function rEve(){
+  return`<div>
+    <div class="filt"><label>Estado</label><select class="fsel" id="fE" onchange="filtEve()"><option value="">Todos</option>${EST_ALL.map(e=>`<option>${e}</option>`).join('')}</select><label>Conjunto</label><select class="fsel" id="fEC" onchange="filtEve()"><option value="">Todos</option>${allConjs().map(c=>`<option>${c.n}</option>`).join('')}</select><label>Prioridad</label><select class="fsel" id="fP" onchange="filtEve()"><option value="">Todas</option><option>Alta</option><option>Media</option><option>Baja</option></select></div>
+    <div class="tbl-wrap"><table><thead><tr><th>ID</th><th style="min-width:150px">Tarea / Conjunto</th><th>Tipo</th><th>Encargado</th><th>Aprobador</th><th>Pri.</th><th>Estado</th><th>Cambiar</th><th>Com.</th><th>Vence</th></tr></thead><tbody id="eve-tbody">${eveRows(DATA.tareasEve,true)}</tbody></table></div>
+    <p id="eve-lbl" style="font-size:10px;color:var(--txt);margin-top:8px">${DATA.tareasEve.length} tareas</p></div>`;
+}
+function eveRows(d,isStaff){return d.map(t=>{const idx=DATA.tareasEve.indexOf(t);const opts=(isStaff?EST_ALL:EST_DEL).map(s=>`<option ${t.est===s?'selected':''}>${s}</option>`).join('');return`<tr><td style="font-size:9px;color:var(--txt);font-family:'DM Mono',monospace">${t.id}</td><td><p style="font-size:11px;font-weight:500;color:var(--v)">${t.n}</p><p style="font-size:9px;color:var(--txs)">${t.conj}</p></td><td style="font-size:10px;color:var(--txs)">${t.tipo}</td><td style="font-size:10px">${t.enc.split(' ')[0]}</td><td style="font-size:10px">${t.apr}</td><td><span class="${PC[t.pri]}">${t.pri}</span></td><td><span class="badge ${EB[t.est]||'b-nuevo'}">${t.est}</span></td><td><select class="est-sel" onchange="cambiarEst(${idx},this.value)">${opts}</select></td><td><button class="btn-sm" onclick="abrirComEve(${idx})">💬${t.coms.length||''}</button></td><td style="font-size:10px;color:var(--txs);white-space:nowrap">${t.vence}</td></tr>`;}).join('');}
+function filtEve(){const fE=document.getElementById('fE')?.value||'';const fEC=document.getElementById('fEC')?.value||'';const fP=document.getElementById('fP')?.value||'';const d=DATA.tareasEve.filter(t=>(!fE||t.est===fE)&&(!fEC||t.conj===fEC)&&(!fP||t.pri===fP));const tb=document.getElementById('eve-tbody');if(tb){tb.innerHTML=eveRows(d,true);document.getElementById('eve-lbl').textContent=d.length+' tareas';}}
+
+// ══ MIS EVENTUALES ════════════════════════════════════
+function rMisEve(){
+  const mias=DATA.tareasEve.filter(e=>ME.conjuntos?.includes(e.conj));
+  return`<div><p class="sh">Mis tareas eventuales</p>${!mias.length?'<div style="text-align:center;padding:2rem;color:var(--txs)">Sin tareas asignadas</div>':`<div class="tbl-wrap"><table><thead><tr><th>ID</th><th style="min-width:150px">Tarea</th><th>Estado</th><th>Cambiar</th><th>Com.</th><th>Vence</th></tr></thead><tbody>${mias.map(t=>{const idx=DATA.tareasEve.indexOf(t);return`<tr><td style="font-size:9px;color:var(--txt);font-family:'DM Mono',monospace">${t.id}</td><td><p style="font-size:11px;font-weight:500;color:var(--v)">${t.n}</p><p style="font-size:9px;color:var(--txs)">${t.conj}</p></td><td><span class="badge ${EB[t.est]||'b-nuevo'}">${t.est}</span></td><td><select class="est-sel" onchange="cambiarEst(${idx},this.value)">${EST_DEL.map(s=>`<option ${t.est===s?'selected':''}>${s}</option>`).join('')}</select></td><td><button class="btn-sm" onclick="abrirComEve(${idx})">💬${t.coms.length||''}</button></td><td style="font-size:10px;color:var(--txs)">${t.vence}</td></tr>`;}).join('')}</tbody></table></div>`}</div>`;
+}
+
+// ══ NUEVA TAREA ════════════════════════════════════════
+function rNuevaEve(){
+  const conjs=ME.rol==='staff'?allConjs().map(c=>c.n):ME.conjuntos||[];
+  return`<div><p class="sh">Nueva tarea eventual</p><div class="fw">
+    <div class="fg"><div><p class="fl">Nombre *</p><input class="fi" id="nt-n" placeholder="Describe la tarea"></div><div><p class="fl">Tipo</p><select class="fi" id="nt-t"><option>Cotización</option><option>Trabajo</option><option>Comunicado</option><option>Documento</option><option>Llamado de atención</option><option>Reporte/PQR</option></select></div></div>
+    <div class="fg"><div><p class="fl">Conjunto</p><select class="fi" id="nt-c">${conjs.map(n=>`<option>${n}</option>`).join('')}</select></div><div><p class="fl">Prioridad</p><select class="fi" id="nt-p"><option>Alta</option><option selected>Media</option><option>Baja</option></select></div></div>
+    <div class="fg"><div><p class="fl">Vencimiento</p><input class="fi" id="nt-v" type="date"></div><div><p class="fl">Aprobador</p><select class="fi" id="nt-a"><option value="paul">Paul</option><option value="tania">Tania</option><option value="victoria">Victoria</option></select></div></div>
+    <div class="fg1"><div><p class="fl">Descripción *</p><textarea class="fi fta" id="nt-o" placeholder="Contexto y objetivo..."></textarea></div></div>
+    <div class="fbns"><button class="btn btn-o" onclick="goTabId('nueva-eve')">Limpiar</button><button class="btn btn-v" onclick="guardarNuevaEve()">➕ Crear tarea</button></div>
+  </div><div id="nt-ok" style="display:none;padding:10px 13px;background:#e0ede6;border-radius:9px;font-size:12px;color:var(--v);font-weight:500">✓ Tarea creada.</div></div>`;
+}
+function guardarNuevaEve(){const n=document.getElementById('nt-n')?.value.trim();const obs=document.getElementById('nt-o')?.value.trim();if(!n||!obs){alert('Completa nombre y descripción.');return;}const av=document.getElementById('nt-a').value;const an=av==='paul'?'Paul':av==='tania'?'Tania':'Victoria';const vEl=document.getElementById('nt-v');const vs=vEl.value?vEl.value.slice(8)+'/'+vEl.value.slice(5,7):'–';const nuevoId='T-'+String(DATA.tareasEve.length+1).padStart(3,'0');DATA.tareasEve.push({id:nuevoId,n,tipo:document.getElementById('nt-t').value,conj:document.getElementById('nt-c').value,enc:ME.n,ra:av,apr:an,pri:document.getElementById('nt-p').value,est:'Nuevo',reg:tsCol().slice(0,5),vence:vs,obs,coms:[]});document.getElementById('nt-ok').style.display='block';setTimeout(()=>{const el=document.getElementById('nt-ok');if(el)el.style.display='none';},3000);toast('✓ '+nuevoId+' creada');updateBadge();}
+
+// ══ APROBACIONES ══════════════════════════════════════
+function rApro(){
+  const mine=DATA.tareasEve.filter(e=>e.est==='Pendiente aprobación'&&e.ra===ME.ra);
+  return`<div><div class="ibox"><strong>Solo ves las aprobaciones asignadas a tu rol.</strong></div><p class="sh">Pendientes — ${mine.length} tarea${mine.length!==1?'s':''}</p>${!mine.length?`<div style="text-align:center;padding:3rem;color:var(--txs)"><div style="font-size:48px;margin-bottom:12px">✅</div>Sin pendientes</div>`:mine.map(t=>{const idx=DATA.tareasEve.indexOf(t);return`<div class="apro-card" id="apr-${idx}"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px"><div><p style="font-size:12px;font-weight:600;color:var(--v)">${t.n}</p><p style="font-size:10px;color:var(--txs);margin-top:2px">${t.id} · ${t.conj} · ${t.enc} · Vence ${t.vence}</p></div><span class="${PC[t.pri]}">${t.pri}</span></div><div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap"><span class="badge b-pend">Pte. aprobación</span><span style="font-size:10px;color:var(--txs)">${t.tipo}</span></div><div class="apro-obs">${t.obs}${t.coms.length?`<br><br><em style="font-size:10px">Comentarios:</em>${t.coms.map(c=>`<br>• ${c}`).join('')}`:''}</div><div id="apr-btns-${idx}" style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-ok" onclick="aprobar(${idx})">✓ Aprobar y finalizar</button><button class="btn btn-dv" onclick="devolver(${idx})">↩ Devolver</button><button class="btn btn-cm" onclick="abrirComEve(${idx})">💬 Comentar</button></div></div>`;}).join('')}</div>`;
+}
+function aprobar(idx){DATA.tareasEve[idx].est='Finalizado';document.getElementById(`apr-btns-${idx}`).innerHTML=`<span style="font-size:11px;padding:6px 10px;background:#e0ede6;color:var(--v);border-radius:8px;display:inline-block;font-weight:500">✓ Aprobada y finalizada.</span>`;updateBadge();toast('✓ Aprobada');}
+function devolver(idx){DATA.tareasEve[idx].est='En proceso';document.getElementById(`apr-btns-${idx}`).innerHTML=`<span style="font-size:11px;padding:6px 10px;background:#fce8e6;color:var(--rj);border-radius:8px;display:inline-block;font-weight:500">↩ Devuelta al delegado.</span>`;updateBadge();toast('↩ Devuelta');}
+function cambiarEst(idx,val){DATA.tareasEve[idx].est=val;updateBadge();toast('Estado actualizado');goTabId(curTab);}
+function updateBadge(){const b=document.getElementById('apro-badge');if(b)b.textContent=pendCount();}
+
+// ══ RENDIMIENTO ═══════════════════════════════════════
+function rRend(){
+  const mes=getMes();const myConjs=ME.rol==='staff'?allConjs():allConjs().filter(c=>ME.conjuntos?.includes(c.n));
+  return`<div>
+    <div class="filt"><label>Delegado:</label><select class="fsel" id="fRD" onchange="filtRend()"><option value="">Todos</option>${[...new Set(allConjs().map(c=>c.del))].map(d=>`<option>${d}</option>`).join('')}</select></div>
+    <div class="two-col" id="rend-conjs">${rendCards(myConjs,mes)}</div>
+    <div style="margin-top:1rem"><p class="sh">💼 Cartera — ingreso manual (${mes})</p>
+    <div class="tbl-wrap"><table><thead><tr><th>Conjunto</th><th>Tipo</th><th>Delegado</th>${MESES.slice(0,5).map(m=>`<th style="text-align:center">${m.slice(0,3)}</th>`).join('')}<th style="text-align:center">Score ${mes}</th></tr></thead>
+    <tbody>${myConjs.map(c=>{const sc=parseInt(c.cartera[mes])||0;const col=sc>=80?'var(--vm)':sc>=60?'var(--am)':sc>0?'var(--rj)':'var(--txt)';const isPro=DATA.conjuntos.pro.find(p=>p.n===c.n);return`<tr><td style="font-weight:500">${c.n}</td><td><span class="${isPro?'tipo-pro':'tipo-def'}">${isPro?'A&V':'Def.'}</span></td><td style="color:var(--txs);font-size:10px">${c.del}</td>${MESES.slice(0,5).map(m=>`<td style="text-align:center">${m===mes?`<input type="number" min="0" max="100" value="${c.cartera[m]||''}" placeholder="–" onchange="updateCartera('${c.n}','${m}',this.value)" style="width:52px;padding:3px 6px;border:1px solid var(--brd);border-radius:6px;font-size:11px;font-weight:600;text-align:center;font-family:inherit;background:var(--b)">`:`<span style="font-size:11px;font-weight:600;color:${c.cartera[m]?'var(--vm)':'var(--txt)'}">${c.cartera[m]||'–'}</span>`}</td>`).join('')}<td style="text-align:center">${sc?`<span style="font-size:12px;font-weight:700;color:${col}">${sc}/100</span>`:'<span style="color:var(--txt)">–</span>'}</td></tr>`;}).join('')}</tbody></table></div></div></div>`;
+}
+function rendCards(conjs,mes){return conjs.map(c=>{const p=c.eval[mes];const ni=notaInfo(p);const cart=parseInt(c.cartera[mes])||0;const isPro=DATA.conjuntos.pro.find(x=>x.n===c.n);return`<div class="conj-card" style="border-left:4px solid ${ni.bar}"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px"><div><p style="font-size:12px;font-weight:600;color:var(--v)">${c.n}</p><div style="display:flex;align-items:center;gap:5px;margin-top:3px"><div style="width:18px;height:18px;border-radius:50%;background:${c.c};display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:700;color:#fff">${c.del.slice(0,2).toUpperCase()}</div><span style="font-size:10px;color:var(--txs)">${c.del}</span><span class="${isPro?'tipo-pro':'tipo-def'}" style="font-size:8px">${isPro?'A&V':'Def'}</span></div></div><div style="text-align:right"><span class="nota-chip ${ni.c}">${p>0?p+'%':'–'} · ${ni.t}</span><br><span class="bono-tag ${bonoVal(p)?'bono-ok':'bono-no'}" style="margin-top:4px;display:inline-block">${bonoFmt(p)}</span></div></div><div style="display:flex;gap:3px;margin-bottom:8px">${MESES.slice(0,5).map(m=>{const v=c.eval[m];const ni2=notaInfo(v);const isCur=m===mes;const h=v>0?Math.max(3,Math.round(v/100*36)):2;return`<div style="flex:1;text-align:center"><div style="height:40px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:2px"><div style="width:100%;height:${h}px;background:${ni2.bar};border-radius:2px 2px 0 0;opacity:${isCur?1:.45}"></div></div><p style="font-size:8px;color:${isCur?ni2.bar:'var(--txt)'};font-weight:${isCur?700:400}">${v>0?v+'%':'–'}</p><p style="font-size:7px;color:var(--txt)">${m.slice(0,3)}</p></div>`;}).join('')}</div><div style="display:flex;align-items:center;gap:6px;margin-bottom:4px"><span style="font-size:9px;color:var(--txs);width:65px;flex-shrink:0">Evaluación</span><div class="mini-bar"><div class="mini-fill" style="width:${p}%;background:${ni.bar}"></div></div><span style="font-size:10px;font-weight:600;color:${ni.bar};width:32px">${p>0?p+'%':'–'}</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:9px;color:var(--txs);width:65px;flex-shrink:0">Cartera</span><div class="mini-bar"><div class="mini-fill" style="width:${cart}%;background:var(--az)"></div></div><span style="font-size:10px;font-weight:600;color:var(--az);width:32px">${cart||'–'}</span></div></div>`;}).join('');}
+function filtRend(){const fD=document.getElementById('fRD')?.value||'';const mes=getMes();const base=ME.rol==='staff'?allConjs():allConjs().filter(c=>ME.conjuntos?.includes(c.n));const filtered=fD?base.filter(c=>c.del===fD):base;const el=document.getElementById('rend-conjs');if(el)el.innerHTML=rendCards(filtered,mes);}
+function updateCartera(conj,mes,val){const v=Math.min(100,Math.max(0,parseInt(val)||0));const c=allConjs().find(x=>x.n===conj);if(c){c.cartera[mes]=v||'';toast('✓ Cartera actualizada');}}
+
+// ══ INFORMES ══════════════════════════════════════════
+function rInf(){
+  const myConjs=getMyConjs();
+  return`<div>
+    <div class="filt"><label>Conjunto:</label><select class="fsel" id="inf-conj" onchange="renderInforme()">${myConjs.map(n=>`<option>${n}</option>`).join('')}</select><label>Período:</label><select class="fsel" id="inf-per" onchange="renderInforme()"><option value="hoy">Hoy</option><option value="semana">Esta semana</option><option value="mes" selected>Este mes</option></select><button class="btn-export" onclick="exportarPDF()">📤 PDF</button></div>
+    <div id="inf-content"></div>
+  </div>`;
+}
+function renderInforme(){
+  const conj=document.getElementById('inf-conj')?.value;const per=document.getElementById('inf-per')?.value||'mes';if(!conj)return;
+  const mes=getMes();const conjObj=allConjs().find(c=>c.n===conj);const isPro=DATA.conjuntos.pro.find(c=>c.n===conj);
+  const perLabel={hoy:`Hoy — 27 de ${mes.toLowerCase()} 2026`,semana:`Semana ${mes} 2026`,mes:`${mes} 2026`};
+  const eveConj=DATA.tareasEve.filter(e=>e.conj===conj);const tipo=isPro?'Provisional (A&V)':'Definitivos';
+  const tareasRec=DATA.tareasRec.filter(t=>t.aplica==='Todos'||t.aplica===tipo||t.aplica===tipo.split(' ')[0]);
+  const estConj=ESTADO[conj]||{};const ticoL={auto:'✉️',foto:'📷',manual:'✎'};
+  document.getElementById('inf-content').innerHTML=`
+    <div class="inf-header"><div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px"><div><p style="font-size:18px;font-weight:700;margin-bottom:4px">📋 Informe de gestión</p><p style="font-size:13px;font-weight:600;color:var(--bdd)">${conj}</p><p style="font-size:11px;color:rgba(245,240,232,.7);margin-top:3px">${perLabel[per]} · ${conjObj?.del||'–'}</p></div><div style="text-align:right"><p style="font-size:11px;color:rgba(245,240,232,.7)">Generado:</p><p style="font-size:12px;font-weight:600;color:var(--bdd)">${new Date().toLocaleString('es-CO',{timeZone:'America/Bogota',day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</p></div></div></div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(85px,1fr))">
+      <div class="kpi"><div class="kpi-n" style="color:var(--vm)">${eveConj.filter(e=>e.est==='Finalizado').length}</div><div class="kpi-l">Eventuales ✓</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--am)">${eveConj.filter(e=>e.est==='En proceso'||e.est==='Pendiente aprobación').length}</div><div class="kpi-l">En proceso</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--rj)">${eveConj.filter(e=>e.est==='Nuevo').length}</div><div class="kpi-l">Sin iniciar</div></div>
+      <div class="kpi"><div class="kpi-n" style="color:var(--v)">${tareasRec.filter((_,i)=>['sc','s1','s2','s3','s4'].some(c=>estConj[DATA.tareasRec.indexOf(tareasRec[i])]?.[c]?.done)).length}</div><div class="kpi-l">Recurrentes ✓</div></div>
+    </div>
+    <div class="card"><p class="sh2">📋 Tareas recurrentes</p>${tareasRec.map(t=>{const i=DATA.tareasRec.indexOf(t);const done=['sc','s1','s2','s3','s4'].some(c=>estConj[i]?.[c]?.done);const ts=['sc','s1','s2','s3','s4'].map(c=>estConj[i]?.[c]?.ts).filter(Boolean)[0];return`<div class="ev-item"><span class="ev-hora">${ts||'–'}</span><div class="ev-dot" style="background:${done?'var(--vm)':'var(--brd)'}"></div><span class="ev-txt">${ticoL[t.tipo]} ${t.n}</span><span class="ev-badge" style="background:${done?'#e0ede6':'#fef3dc'};color:${done?'var(--vm)':'var(--am)'}">${done?'✓ Hecha':'⏳ Pendiente'}</span></div>`;}).join('')}</div>
+    <div class="card"><p class="sh2">📌 Tareas eventuales</p>${eveConj.length?eveConj.map(e=>`<div class="ev-item"><span class="ev-hora">${e.reg}</span><div class="ev-dot" style="background:${e.est==='Finalizado'?'var(--vm)':e.est==='En proceso'?'var(--am)':e.est==='Pendiente aprobación'?'var(--rj)':'var(--brd)'}"></div><span class="ev-txt"><strong style="color:var(--v)">${e.id}:</strong> ${e.n}</span><span class="badge ${EB[e.est]||'b-nuevo'}" style="font-size:8px">${e.est}</span></div>`).join(''):'<p style="font-size:11px;color:var(--txt);text-align:center;padding:1rem">Sin tareas eventuales para este período</p>'}</div>
+    <div class="card" style="background:var(--bd)"><p class="sh2">📝 Resumen ejecutivo</p><p style="font-size:12px;color:var(--tx);line-height:1.7"><strong>${conj}</strong> · ${perLabel[per]} · Delegado: <strong>${conjObj?.del||'–'}</strong><br>Tareas recurrentes completadas: <strong>${tareasRec.filter((_,i)=>['sc','s1','s2','s3','s4'].some(c=>estConj[DATA.tareasRec.indexOf(tareasRec[i])]?.[c]?.done)).length}/${tareasRec.length}</strong> · Eventuales finalizadas: <strong>${eveConj.filter(e=>e.est==='Finalizado').length}/${eveConj.length}</strong></p></div>`;
+}
+function exportarPDF(){const conj=document.getElementById('inf-conj')?.value||'Conjunto';alert('📤 PDF del informe de '+conj+'\n\nEn la app desplegada en GitHub Pages, este botón generará el PDF automáticamente con la librería jsPDF e iniciará la descarga del archivo.\n\nFormato: Informe_'+conj.replace(/ /g,'_')+'.pdf');}
+
+// ══ ADMIN ═════════════════════════════════════════════
+function renderAccesosDelegados() {
+  const delegados = Object.entries(CEDULAS)
+    .filter(([ced, cfg]) => cfg.rol === 'delegado')
+    .map(([ced, cfg]) => {
+      const u = DATA.usuarios[cfg.idx];
+      return { ced, cfg, u };
+    });
+  return delegados.map(({ced, cfg, u}) => `
+    <div class="del-access-row ${cfg.activo ? '' : 'inactivo'}">
+      <div style="display:flex;align-items:center;gap:8px;flex:1;min-width:0">
+        <div style="width:28px;height:28px;border-radius:50%;background:${u?.c||'#5a7a6a'};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;flex-shrink:0">${u?.av||'?'}</div>
+        <div><p style="font-size:11px;font-weight:500;color:var(--v)">${u?.n||'Usuario'}</p>
+        <p style="font-size:9px;color:var(--txs);font-family:'DM Mono',monospace">${ced}</p></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:10px;color:${cfg.activo?'var(--vm)':'var(--rj)'};font-weight:500">${cfg.activo?'Habilitado':'Deshabilitado'}</span>
+        <label class="toggle">
+          <input type="checkbox" ${cfg.activo?'checked':''} onchange="toggleAccesoDelegado('${ced}', this.checked)">
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>`).join('');
+}
+
+function toggleAccesoDelegado(cedula, activo) {
+  if (CEDULAS[cedula]) {
+    CEDULAS[cedula].activo = activo;
+    const nombre = DATA.usuarios[CEDULAS[cedula].idx]?.n || cedula;
+    toast(activo ? '✓ Acceso habilitado: ' + nombre : '⛔ Acceso deshabilitado: ' + nombre);
+    goTabId('adm');
+  }
+}
+
+function rAdm(){
+  const ticoL={auto:'✉️',foto:'📷',manual:'✎'};
+  return`<div>
+    <div class="ibox"><strong>Panel de Administración</strong> — Solo visible para gerencia. Gestiona accesos, conjuntos, usuarios y tareas.</div>
+
+    <!-- ACCESO DELEGADOS -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <p class="sh" style="margin:0">🔑 Acceso de delegados</p>
+    </div>
+    <div class="ibox" style="font-size:10px"><strong>Habilitar / deshabilitar acceso.</strong> Gerencia siempre tiene acceso. Los delegados ingresan con su cédula solo si están habilitados aquí.</div>
+    ${renderAccesosDelegados()}
+
+    <div style="height:1px;background:var(--brd);margin:1rem 0"></div>
+
+    <div class="two-col">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><p class="sh" style="margin:0">🏢 Conjuntos</p><button class="btn btn-v" onclick="abrirNuevoConj()" style="font-size:10px">+ Nuevo</button></div>
+        <p class="sh2" style="color:var(--txs)">Definitivos (${DATA.conjuntos.def.length})</p>
+        ${DATA.conjuntos.def.map((c,i)=>`<div class="admin-item"><div class="admin-av" style="background:${c.c}">${c.n.slice(0,2).toUpperCase()}</div><div style="flex:1;min-width:0"><p class="admin-name">${c.n}</p><p class="admin-sub">${c.del}</p></div><span class="tipo-def">Def.</span><div class="admin-actions"><button class="act-btn del" onclick="elimConj(${i},'def')">🗑</button></div></div>`).join('')}
+        <p class="sh2" style="color:var(--txs);margin-top:10px">Provisionales A&V (${DATA.conjuntos.pro.length})</p>
+        ${DATA.conjuntos.pro.map((c,i)=>`<div class="admin-item"><div class="admin-av" style="background:${c.c}">${c.n.slice(0,2).toUpperCase()}</div><div style="flex:1;min-width:0"><p class="admin-name">${c.n}</p><p class="admin-sub">${c.del}</p></div><span class="tipo-pro">A&V</span><div class="admin-actions"><button class="act-btn del" onclick="elimConj(${i},'pro')">🗑</button></div></div>`).join('')}
+      </div>
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><p class="sh" style="margin:0">👤 Perfiles de usuario</p><button class="btn btn-v" onclick="abrirNuevoDel()" style="font-size:10px">+ Nuevo</button></div>
+        ${DATA.usuarios.map((u,i)=>`<div class="admin-item"><div class="admin-av" style="background:${u.c}">${u.av}</div><div style="flex:1;min-width:0"><p class="admin-name">${u.n}</p><p class="admin-sub">${u.cargo}</p></div><span class="${u.rol==='staff'?'tipo-def':'tipo-pro'}" style="font-size:8px">${u.rol==='staff'?'Staff':'Delegado'}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div style="margin-top:1rem">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><p class="sh" style="margin:0">📋 Tareas recurrentes (${DATA.tareasRec.length})</p><button class="btn btn-v" onclick="openOv('ov-nueva-rec')" style="font-size:10px">+ Nueva</button></div>
+      <div class="filt"><label>Aplica:</label><select class="fsel" id="fAdmR" onchange="filtAdmRec()"><option value="">Todas</option><option>Todos</option><option>Definitivos</option><option>Provisional (A&V)</option></select><label>Tipo:</label><select class="fsel" id="fAdmT" onchange="filtAdmRec()"><option value="">Todos</option><option value="foto">📷 Foto</option><option value="auto">✉️ Auto</option><option value="manual">✎ Manual</option></select></div>
+      <div id="adm-rec-list">${admRecRows(DATA.tareasRec)}</div>
+    </div>
+  </div>`;
+}
+function admRecRows(tareas){const ticoL={auto:'✉️',foto:'📷',manual:'✎'};return tareas.map(t=>`<div class="rec-admin-item"><span style="font-size:13px">${ticoL[t.tipo]}</span><div style="flex:1;min-width:0"><p style="font-size:11px;font-weight:500;color:var(--v)">${t.n}</p><p style="font-size:9px;color:var(--txs)">${t.cuando} · ${t.pts} pts</p></div><span class="${t.frec==='semanal'?'tag-sem':'tag-mes'}">${t.frec}</span><span class="${t.aplica==='Provisional (A&V)'?'tipo-pro':t.aplica==='Todos'?'':'tipo-def'}" style="margin-left:4px;font-size:8px">${t.aplica==='Todos'?'Todos':t.aplica==='Provisional (A&V)'?'A&V':'Def.'}</span><div class="admin-actions"><button class="act-btn del" onclick="elimRec(${DATA.tareasRec.indexOf(t)})">🗑</button></div></div>`).join('');}
+function filtAdmRec(){const fA=document.getElementById('fAdmR')?.value||'';const fT=document.getElementById('fAdmT')?.value||'';const filtered=DATA.tareasRec.filter(t=>(!fA||t.aplica===fA)&&(!fT||t.tipo===fT));const el=document.getElementById('adm-rec-list');if(el)el.innerHTML=admRecRows(filtered);}
+
+// ACCESOS
+
+// CONJUNTOS
+function abrirNuevoConj(){const sel=document.getElementById('nc-del');sel.innerHTML=DATA.usuarios.filter(u=>u.rol==='delegado').map(u=>`<option>${u.n}</option>`).join('');openOv('ov-nuevo-conj');}
+function guardarNuevoConj(){const n=document.getElementById('nc-nombre').value.trim();if(!n){alert('Escribe el nombre.');return;}const tipo=document.getElementById('nc-tipo').value;const del=document.getElementById('nc-del').value;const cols=["#1a3d2b","#2d6a4f","#b7791f","#7a5c2e","#5a7a6a","#3d8c68"];const nuevo={n,del,c:cols[Math.floor(Math.random()*cols.length)],eval:{Febrero:0,Marzo:0,Abril:0,Mayo:0,Junio:0,Julio:0,Agosto:0},cartera:{Febrero:'',Marzo:'',Abril:'',Mayo:'',Junio:'',Julio:'',Agosto:''}};if(tipo==='def')DATA.conjuntos.def.push(nuevo);else DATA.conjuntos.pro.push(nuevo);ESTADO[n]=DATA.tareasRec.map(()=>({sc:{done:false,ts:null,foto:null},s1:{done:false,ts:null,foto:null},s2:{done:false,ts:null,foto:null},s3:{done:false,ts:null,foto:null},s4:{done:false,ts:null,foto:null}}));REC_COMS[n]=DATA.tareasRec.map(()=>[]);document.getElementById('nc-nombre').value='';closeOv('ov-nuevo-conj');goTabId('adm');toast('✓ Conjunto "'+n+'" creado');}
+function elimConj(i,tipo){const arr=tipo==='def'?DATA.conjuntos.def:DATA.conjuntos.pro;const n=arr[i].n;if(confirm(`¿Eliminar "${n}"?`)){arr.splice(i,1);goTabId('adm');toast('✓ Eliminado');}}
+
+// USUARIOS
+function abrirNuevoDel(){const sel=document.getElementById('nd-conjs');sel.innerHTML=allConjs().map(c=>`<option>${c.n}</option>`).join('');openOv('ov-nuevo-del');}
+function guardarNuevoDel(){const n=document.getElementById('nd-nombre').value.trim();const email=document.getElementById('nd-email').value.trim();const email2=document.getElementById('nd-email2').value.trim();if(!n||!email){alert('Completa nombre y correo.');return;}const sel=document.getElementById('nd-conjs');const conjs=Array.from(sel.selectedOptions).map(o=>o.value);const newIdx=DATA.usuarios.length;DATA.usuarios.push({n,email,rol:document.getElementById('nd-rol').value,cargo:document.getElementById('nd-cargo').value||'Delegado',equipo:document.getElementById('nd-equipo').value,av:n.slice(0,2).toUpperCase(),c:'#5a7a6a',ra:'delegado',conjuntos:conjs});ACCESOS.push({email:email.toLowerCase(),nombre:n,rol:document.getElementById('nd-rol').value,perfilIdx:newIdx});if(email2)ACCESOS.push({email:email2.toLowerCase(),nombre:n,rol:document.getElementById('nd-rol').value,perfilIdx:newIdx});document.getElementById('nd-nombre').value='';document.getElementById('nd-email').value='';document.getElementById('nd-email2').value='';closeOv('ov-nuevo-del');goTabId('adm');toast('✓ Usuario "'+n+'" creado con acceso habilitado');}
+
+// TAREAS REC
+function guardarNuevaRec(){const n=document.getElementById('nr-nombre').value.trim();if(!n){alert('Escribe el nombre.');return;}DATA.tareasRec.push({n,frec:document.getElementById('nr-frec').value,tipo:document.getElementById('nr-tipo').value,aplica:document.getElementById('nr-aplica').value,cuando:document.getElementById('nr-cuando').value||'En el transcurso del mes',pts:parseInt(document.getElementById('nr-pts').value)||1});allConjs().forEach(c=>{if(ESTADO[c.n])ESTADO[c.n].push({sc:{done:false,ts:null,foto:null},s1:{done:false,ts:null,foto:null},s2:{done:false,ts:null,foto:null},s3:{done:false,ts:null,foto:null},s4:{done:false,ts:null,foto:null}});if(REC_COMS[c.n])REC_COMS[c.n].push([]);});document.getElementById('nr-nombre').value='';closeOv('ov-nueva-rec');toast('✓ Tarea creada');if(curTab==='adm')goTabId('adm');if(curTab==='rec')goTabId('rec');}
+function elimRec(i){const n=DATA.tareasRec[i].n;if(confirm(`¿Eliminar "${n}"?`)){DATA.tareasRec.splice(i,1);goTabId('adm');toast('✓ Eliminada');}}
+
+// COMENTARIOS
+function abrirComRec(i){comI=i;comType='rec';const coms=REC_COMS[conjSelRec]?.[i]||[];document.getElementById('com-task-name').textContent=DATA.tareasRec[i]?.n||'';document.getElementById('com-textarea').value='';document.getElementById('com-existing-list').innerHTML=coms.map(c=>`<div class="com-item">${c}</div>`).join('');openOv('ov-com');}
+function abrirComEve(i){comI=i;comType='eve';const coms=DATA.tareasEve[i]?.coms||[];document.getElementById('com-task-name').textContent=DATA.tareasEve[i]?.n||'';document.getElementById('com-textarea').value='';document.getElementById('com-existing-list').innerHTML=coms.map(c=>`<div class="com-item">${c}</div>`).join('');openOv('ov-com');}
+function guardarCom(){const txt=document.getElementById('com-textarea').value.trim();if(!txt)return;const c=`${ME.n} (${tsCol()}): ${txt}`;if(comType==='rec'){if(!REC_COMS[conjSelRec])REC_COMS[conjSelRec]=[];if(!REC_COMS[conjSelRec][comI])REC_COMS[conjSelRec][comI]=[];REC_COMS[conjSelRec][comI].push(c);}else DATA.tareasEve[comI].coms.push(c);closeOv('ov-com');toast('✓ Comentario guardado');goTabId(curTab);}
+
+// FOTO
+function handleFotoFile(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{fotoUrl=ev.target.result;const img=document.getElementById('foto-prev');img.src=fotoUrl;img.style.display='block';const ts=document.getElementById('foto-ts-box');ts.textContent='✓ '+tsCol()+' (Colombia)';ts.style.display='block';const btn=document.getElementById('foto-confirm-btn');btn.disabled=false;btn.style.opacity='1';};r.readAsDataURL(f);}
+function confirmarFoto(){if(fotoI===null)return;if(!ESTADO[conjSelRec])return;ESTADO[conjSelRec][fotoI][fotoC].done=true;ESTADO[conjSelRec][fotoI][fotoC].ts=tsCol();ESTADO[conjSelRec][fotoI][fotoC].foto=fotoUrl;closeOv('ov-foto');toast('✓ Evidencia con foto registrada');goTabId('rec');}
+document.addEventListener('click',e=>{if(e.target.classList.contains('overlay'))closeOv(e.target.id);});
+
+// Init informe on tab load
+document.addEventListener('click',e=>{if(e.target.classList.contains('app-tab')&&e.target.textContent.includes('Informes')){setTimeout(()=>{const sel=document.getElementById('inf-conj');if(sel&&!document.getElementById('inf-content')?.children.length)renderInforme();},100);}});
+</script>
+</body>
+</html>
