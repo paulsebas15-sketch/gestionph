@@ -548,7 +548,9 @@ function applySnapshot(snap) {
       // CRÍTICO: Firebase puede serializar arrays JS como objetos {0:{...},1:{...}}.
       // Normalizar SIEMPRE antes de .filter() para evitar TypeError que colapsa toda la carga.
       var _rawEve = Array.isArray(snap.tareasEve) ? snap.tareasEve : Object.values(snap.tareasEve);
-      var fbEve = _rawEve.filter(function(t){ return t && !deletedSet.has(t.id); });
+      // Filtrar tareas ya archivadas para evitar que Firebase re-agregue a tareasEve
+      var _archivedIds = new Set((DATA.tareasArchivo||[]).map(function(a){ return a.id; }));
+      var fbEve = _rawEve.filter(function(t){ return t && !deletedSet.has(t.id) && !_archivedIds.has(t.id); });
       // "approved wins": si local tiene Aprobado/Suspendido, Firebase no puede revertirlo
       const ESTADOS_FINALES = ['Aprobado','Suspendido'];
       const localById = {};
@@ -3608,11 +3610,14 @@ function archivarAprobadas(){
   if(!confirm('¿Archivar '+aprobadas.length+' tareas aprobadas?\n\nMes: '+mesLabel+'\n\nSe moverán al historial y desaparecerán de la lista activa. Podrás descargar el informe desde el historial.')) return;
   if(!DATA.tareasArchivo) DATA.tareasArchivo = [];
   var ahora = tsCol();
+  var existingIds = new Set(DATA.tareasArchivo.map(function(a){ return a.id; }));
   aprobadas.forEach(function(t){
+    if(existingIds.has(t.id)) return; // ya archivada, no duplicar
     t.archivada = ahora;
     t.mesCierre = mesLabel;
     t.mesKey = mesKey;
     DATA.tareasArchivo.push(t);
+    existingIds.add(t.id);
   });
   DATA.tareasEve = DATA.tareasEve.filter(function(t){ return t.est !== 'Aprobado'; });
   autoSave();
