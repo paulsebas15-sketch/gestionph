@@ -1786,6 +1786,9 @@ let misEveSemFiltro = new Set(); // igual que eveSemFiltro pero para vista deleg
 let comI=null, comType=null;
 let fotoI=null, fotoC=null, fotoUrls=[], fotoTaskIdx=null, fotoSlotIdx=null;
 
+// ── Inicializar: cargar localStorage + escuchar Firebase ──────────────────
+loadLocal();
+
 // ═══ AUTH ══════════════════════════════════════════
 function doLogin(){
   const raw=(document.getElementById('ced-in').value||'').toString().replace(/\D/g,'').trim();
